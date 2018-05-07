@@ -1,0 +1,51 @@
+elasticsearch-jdbc
+参考：http://blog.csdn.net/laoyang360/article/details/51694519
+elasticsearch-jdbc的缺点：不支持删除
+
+下载
+cd /data/eshome
+wget http://xbib.org/repository/org/xbib/elasticsearch/importer/elasticsearch-jdbc/2.3.4.1/elasticsearch-jdbc-2.3.4.1-dist.zip
+unzip elasticsearch-jdbc-2.3.4.1-dist.zip
+mv elasticsearch-jdbc-2.3.4.1 elasticsearch-jdbc
+
+下载SQL Server JDBC driver
+https://docs.microsoft.com/zh-cn/sql/connect/jdbc/microsoft-jdbc-driver-for-sql-server
+
+上传mssql-jdbc-6.2.2.jre8.jar 到elasticsearch-jdbc/lib/
+
+创建脚本：
+questions_import.sh :
+
+添加可执行权限：chmod a+x questions_import.sh
+查看权限：ls -l questions_import.sh
+			-rwxr-xr-x 1 root root 227 Dec 25 11:26 questions_import.sh
+
+
+#!/bin/sh
+bin=$JDBC_IMPORTER_HOME/bin
+lib=$JDBC_IMPORTER_HOME/lib
+  java \
+  -cp "${lib}/*" \
+  -Dlog4j.configurationFile=${bin}/log4j2.xml \
+  org.xbib.tools.Runner \
+  org.xbib.tools.JDBCImporter statefile.json
+
+[root@5b9dbaaa148a odbc_es]# cat statefile.json
+{
+	"type" : "jdbc",
+	"jdbc": {
+		"elasticsearch.autodiscover":true,
+		"elasticsearch.cluster":"my-application",
+		"url":"jdbc:mysql://10.8.5.101:3306/test",
+		"user":"root",
+		"password":"123456",
+		"sql":"select * from cc",
+		"elasticsearch" : {
+		  "host" : "10.8.5.101",
+		  "port" : 9300
+		},
+		"index" : "myindex_2",
+		"type" : "mytype_2"
+	}
+}
+

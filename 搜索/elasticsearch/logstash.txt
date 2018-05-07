@@ -1,0 +1,80 @@
+下载
+cd /data/eshome
+wget https://artifacts.elastic.co/downloads/logstash/logstash-6.1.1.zip
+unzip logstash-6.1.1.zip
+mv logstash-6.1.1 logstash
+
+测试
+建立logstash.conf：（功能：键盘输入字符保存到Elasticsearch，并在屏幕显示）
+input { stdin { } }
+output {
+  elasticsearch {
+        hosts => ["localhost:9200"]
+        index => "logstash"
+  }
+  stdout { codec => rubydebug }
+}
+
+
+启动logstash：
+bin/logstash -f logstash.conf
+
+
+安装数据库导入插件
+安装环境ruby
+yum install rubygems
+
+bin/logstash-plugin install logstash-input-jdbc
+
+使用：
+jdbc.sql 
+select top 10 id,questioncontent,status from questions(nolock) where status=1
+
+questionsimport.conf
+input {
+    stdin {
+    }
+    jdbc {
+      jdbc_connection_string => "jdbc:sqlserver://114.55.175.27:1433;DatabaseName=questiondata"
+      jdbc_user => "prj_examdata"
+      jdbc_password => "28_a176LWB0"
+      jdbc_driver_library => "/data/eshome/logstash/lib/mssql-jdbc-6.2.2.jre8.jar"
+      jdbc_driver_class => "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+      jdbc_paging_enabled => "true"
+      jdbc_page_size => "50000"
+      statement_filepath => "/data/eshome/logstash/jdbc.sql"
+      schedule => "* * * * *"
+      type => "jdbc"
+    }
+}
+output {
+    elasticsearch {
+        hosts => ["localhost:9200"]
+        index => "questiondata"
+        document_type => "questions"
+        document_id => "%{id}"
+    }
+    stdout {
+        codec => json_lines
+    }
+}
+
+启动logstash：
+bin/logstash -f questionsimport.conf
+
+----------------------------------------------------------
+离线安装：
+wget https://github.com/logstash-plugins/logstash-input-jdbc/archive/v4.3.3.zip
+unzip v4.3.3.zip
+bin/logstash-plugin install logstash-input-jdbc-4.3.3
+bin/logstash-plugin install logstash-input-jdbc-4.3.3/logstash-input-jdbc.gem
+
+------------
+默认的安装目录是在: /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.75.x86_64
+ls /usr/lib/jvm/
+vi /etc/profile
+#set java environment
+JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.75.x86_64
+JRE_HOME=JAVAHOME/jreCLASSPATH=.:JAVAHOME/jreCLASSPATH=.:JAVA_HOME/lib/dt.jar:JAVAHOME/lib/tools.jar:JAVAHOME/lib/tools.jar:JRE_HOME/lib
+PATH=PATH:PATH:JAVA_HOME/bin:$JRE_HOME/bin
+export JAVA_HOME JRE_HOME CLASS_PATH PATH

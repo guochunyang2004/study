@@ -1,0 +1,102 @@
+http://hi.baidu.com/ahwyb/blog/item/56fdf5de44a8dd5fcdbf1a42.html
+
+判断是否网络正常  
+private   bool IsConnectedToInternet()
+
+         ...{
+
+             int Desc;
+
+             return internet.InternetGetConnectedState(out   Desc, 0);
+
+         }   
+
+设置默认页面:
+
+webBrowser1.Navigate(new Uri("http://www.ic2ic.com/copy.jsp"));
+
+登录代码:
+
+       private void btnlogin_Click(object sender, EventArgs e)
+
+         ...{
+
+             webBrowser1.Document.GetElementById("id").InnerText =txtuser.Text.ToString().Trim();//fill name
+
+             webBrowser1.Document.GetElementById("passwd").InnerText =txtpwd.Text.ToString().Trim();//fill pwd
+
+             HtmlElement formLogin = webBrowser1.Document.Forms["frmLogin"];
+
+         
+
+             formLogin.InvokeMember("submit");
+
+             Thread.Sleep(5000);
+
+             herfclick("http://www.ic2ic.com/upload.jsp");//这是登录成功的操作,跳转到//upload.asp
+
+                                                          //注意不是直接跳过去的,模拟点击链接
+
+                                                          //SESSION不会丢失
+
+             herfclick("http://www.ic2ic.com/copy.jsp"); 
+
+         }
+
+
+
+模拟点击链接:
+
+    private void herfclick(string url)
+
+         ...{
+
+             for (int i = 0; i < webBrowser1.Document.All.Count; i++)
+
+             ...{
+
+                 if (webBrowser1.Document.All[i].TagName == "A" && webBrowser1.Document.All[i].GetAttribute("href").ToString().Trim() ==url)
+
+                 ...{
+
+                     webBrowser1.Document.All[i].InvokeMember("click");//引发”CLICK”事件
+
+                     break;
+
+                 }
+
+             }
+
+            
+
+         }
+
+运行网页中的JS函数
+
+     private void callJsMethod(string jsfun,string jsParameter)//函数名字,函数参数
+
+         ...{
+
+             HtmlDocument doc = webBrowser1.Document;
+
+             doc.InvokeScript(jsfun,new object[]...{jsParameter});
+
+         }
+
+填充数据:
+
+   private void filldate(string txt)
+
+         ...{
+
+             HtmlElement frmWord = webBrowser1.Document.Forms["frmWord"];//找到from
+
+             HtmlElementCollection txtarea = frmWord.GetElementsByTagName("TEXTAREA");
+
+             HtmlElementCollection radio = frmWord.GetElementsByTagName("INPUT");
+
+             radio[2].InvokeMember("click");//选择radio控件
+
+             txtarea[0].InnerText = txt.ToString();
+
+         }

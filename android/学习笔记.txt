@@ -1,0 +1,32 @@
+﻿一个apk文件就是一个Application,由一些Activities。由四个模块组成：Activity、Service、Content Provider 和 Broadcast Receiver，其中Activity是实现应用的主体
+---------------------------------------------------------------
+Android的单线程模型
+Android会同时启动一个对应的主线程（Main Thread）,主线程通常又被叫做UI线程.在开发Android 应用时必须遵守单线程模型的原则： Android UI操作并不是线程安全的并且这些操作必须在UI线程中执行。
+如果在非UI线程中直接操作UI线程，会抛出android.view.ViewRoot$CalledFromWrongThreadException: Only the original thread that created a view hierarchy can touch its views。
+由于UI线程负责事件的监听和绘图，因此，必须保证UI线程能够随时响应用户的需求，如果UI线程超过5s没有响应用户请求，会弹出对话框提醒用户终止应用程序。
+如果在新开的线程中需要对UI进行设定，就可能违反单线程模型，因此android采用一种复杂的Message Queue机制保证线程间通信。
+
+Message Queue是一个消息队列，用来存放通过Handler发布的消息。
+
+AsyncTask:
+首先继承一下此类，实现以下若干方法，
+onPreExecute(), 该方法将在执行实际的后台操作前被UI thread调用。可以在该方法中做一些准备工作，如在界面上显示一个进度条。 
+doInBackground(Params...), 将在onPreExecute 方法执行后马上执行，该方法运行在后台线程中。这里将主要负责执行那些很耗时的后台计算工作。
+可以调用publishProgress方法来更新实时的任务进度。该方法是抽象方法，子类必须实现。 
+onProgressUpdate(Progress...),在publishProgress方法被调用后，UI thread将调用这个方法从而在界面上展示任务的进展情况，例如通过一个进度条进行展示。 
+onPostExecute(Result), 在doInBackground 执行完成后，onPostExecute 方法将被UI thread调用，后台的计算结果将通过该方法传递到UI thread.
+使用时需要遵循以下规则：
+1)Task的实例必须在UI thread中创建 
+2)execute方法必须在UI thread中调用 
+3)不要手动的调用这些方法，只调用execute即可
+4)该task只能被执行一次，否则多次调用时将会出现异常
+------------------------------------------------------------
+Activity Stack
+每次启动新的Activity都将被添加到Activity Stack。用户可以方便的返回上一个Activity直到Home Screen，到达Home Screen后，将无法再继续查看堆栈记录。相对于Views、Windows、Menus和Dialogs而言，Activity是唯一可被记录在History stack中的数据
+Task
+Android通过将这两个Activity保存在同一个Task里来体现这一用户体验。简单来说，一个Task就是用户体验上的一个“应用”。 它将相关的Activity组合在一起，以stack的方式管理（就是前面提到的Activity Stack），这就是Task。多个Activity共同协作完成某项应用，而不管Activity具体属于哪个Application
+Task通过Application launcher、Home screen的快捷方式或者 由 “Recent Tasks”（长时间按住Home键）最近使用过的Task记录中启动。当从一个Activity中启动另外一个Activity时，Back键将作用于返回前一个Activity,与此同时 新开启的Activity将被添加到Activity Stack中。
+=======================布局========================================
+LinearLayout属性android:orientation
+Android布局LinearLayout注意设置属性android:orientation属性，否则有的组件可能无法显示。
+该属性不设置时默认为horizontal。此时第一个控件的宽度若设置成“fill_parent”,后面添加的组件将都无法看到。因此使用该布局的时候要注意设置android:orientation="vertical"。

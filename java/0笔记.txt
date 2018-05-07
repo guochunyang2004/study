@@ -1,0 +1,30 @@
+java虚拟机原理
+什么是servlet
+ Servlet3.0 新增的特性
+<jsp:useBean标签
+什么是微服务，rpc
+protocol buffers、JSON、XML和Thrift协议
+PaaS ：面向开发者的云服务
+saas：面向消费者的云服务
+Spring Boot spring cloud
+hashtable同步原理
+父类调用子类的重写方法，静态变量是否可继承，父类构造函数是否默认调用
+git使用
+HAProxy优于nginx
+java nio
+uinicode utf8区别
+ascii 一个字节0-127
+ascii扩展字符集 一个字节128-256
+GB2312 国标码  ascii的中文扩展 两个字节 低字节大于127  大于127为全角 中文，小于127为半角，7000多简体汉字，还把数学符号、罗马希腊的
+字母、日文的假名，ASCII 里的数字、标点、字母。
+GBK国标扩展码 2个字节 第一个字节大于127 第二个字节不限，包括了gb2312，增加了20000个汉字包括繁体和符号
+GB18030  GBK扩展 增加几千少数民族字
+以上中文字符集统称“DBCS“（Double Byte Charecter Set 双字节字符集）。在DBCS系列标准里，最大的特点是两字节长的汉字字符和一字节长的英文字符并存于同一套编码方案里。
+Unicode 2个字节 世界所有字符，中英文都是1个字符
+Unicode编码转化为“可变长编码”的UTF-8编码。
+UTF 面向传输的 UTF（UCS Transfer Format）标准，UTF-8 每次8个位传输数据，
+UTF-16 每次16个位。UTF-8就是在互联网上使用最广的一种unicode的实现方式，UTF-8把Unicode字符编码1-6个字节，英文字母1个字节，汉字3个字节，生僻的字符4-6个字节。如果你要传输的文本包含大量英文字符，用UTF-8编码就能节省空间，UTF-8兼容ascii
+
+cas如何调用
+collections静态类同步方法
+

@@ -1,0 +1,58 @@
+中文乱码：export LC_ALL=zh_CN.GB2312;export LANG=zh_CN.GB2312
+--------------------------centos7 防火墙----
+停止并禁用防火墙；
+systemctl stop firewalld.service
+systemctl disable firewalld.service
+systemctl start firewalld.service
+systemctl restart firewalld
+firewall-cmd --reload
+
+iptables -L -n | grep 21
+
+获取 firewalld 状态：firewall-cmd --state
+加入要开放的Port到运行区域：firewall-cmd --add-port=3128/tcp
+端口永久添加到public区域：firewall-cmd --zone=public --add-port=80/tcp --permanent
+ftp服务永久添加到public区域：firewall-cmd --zone=public --add-service=ftp --permanent
+ftp服务永久关闭在public区域：firewall-cmd --zone=public --remove-service=ftp --permanent
+
+查詢服務的啟用狀態：firewall-cmd --query-service ftp
+
+在不改变状态的条件下重新加载防火墙：firewall-cmd --reload
+
+
+获取默认区域的网络设置：firewall-cmd --get-default-zone
+设置默认区域：firewall-cmd --set-default-zone=<zone>
+
+获取支持的区域列表：firewall-cmd --get-zones
+
+获取所有支持的服务：firewall-cmd --get-services
+
+列出全部启用的区域的特性：firewall-cmd --list-all-zones
+
+获取活动的区域：firewall-cmd --get-active-zones
+
+-----------------------------
+切换用户：su [username]
+
+------------
+tar -xzvf .tar.gz
+-----------------服务相关命令---------------
+可以通过netstat和lsof查看系统都运行了哪些服务，将不必要的进行关闭
+
+systemctl daemon-reload
+systemctl stop postfix
+systemctl stop avahi-daemon
+systemctl disable postfix
+systemctl disable avahi-daemon
+systemctl list-unit-files    查看正在运行服务的状态报告
+systemctl start httpd.service    启动服务
+systemctl stop  httpd.service    关闭服务
+systemctl restart  httpd.service 重启服务
+systemctl reload   httpd.service 重新加载服务
+systemctl disable  httpd.service 开机不启动
+systemctl enable   httpd.service 开机启动
+systemctl status   httpd.service 查看服务运行状态
+systemctl show     httpd.service 显示服务或任务的属性
+systemctl list-dependencies  httpd.service  检查服务依赖关系
+systemctl is-enabled  httpd.service  检查服务是否开机启动及级别
+systemctl -H 192.168.117.128 start httpd.service   启动192.168.117.128机器上的httpd服务

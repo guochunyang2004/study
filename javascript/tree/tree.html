@@ -1,0 +1,45 @@
+<html>
+<body>
+<div id="content"></div>
+<script>
+document.body.onload = function(){
+	var arr  = [{id:1,pId:0,name:"a"},{id:2,pId:0,name:"b"},{id:3,pId:0,name:"c"},{id:3,pId:1,name:"d"}];
+	var tm = new treeMenu(arr);	
+	var html = tm.init(0);
+	document.getElementById("content").innerHTML = html;
+}
+function treeMenu(a){  
+        this.tree=a||[];  
+        this.groups={};  
+  };  
+  treeMenu.prototype={  
+      init:function(pid){  
+          this.group();  
+          return this.getDom(this.groups[pid]);  
+      },  
+      group:function(){  
+          for(var i=0;i<this.tree.length;i++){  
+              if(this.groups[this.tree[i].pId]){  
+                  this.groups[this.tree[i].pId].push(this.tree[i]);  
+              }else{  
+                  this.groups[this.tree[i].pId]=[];  
+                  this.groups[this.tree[i].pId].push(this.tree[i]);  
+              }  
+          }  
+      },  
+      getDom:function(a){  
+          if(!a){return '';}  //当前节点不存在的时候，退出  
+          var html='\n<ul >\n';  
+          for(var i=0;i<a.length;i++){  
+            html+='<li>'+a[i].name;  
+            html+=this.getDom(this.groups[a[i].id]);  
+             html+='</li>\n';  
+          };  
+          html+='</ul>\n';  
+          return html;  
+      }  
+}
+
+
+</script>
+</body>

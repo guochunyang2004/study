@@ -1,0 +1,69 @@
+我想做一个切换用户Cookie的程序 
+首先保存若干已登陆用户的COOKIE到数据库,然后通过 
+string str = GetCookieByUserId(comboBox1.Text); 
+webBrowser1.Document.Cookie = str; 
+将数据库中的Cookie赋值到webBrowser1.Document.Cookie 
+
+我看了webBrowser1.Document.Cookie 的说明是: 
+Get or set the HTTP cookies associated with the document 
+
+我可以Get但是不能SET 
+
+请问有达人碰到此类问题吗? 
+
+我看了MSDN好像只能GET. 
+请问如何解决这个问题? 
+
+谢谢 
+
+
+顺便散分.出差1各月了还没回去,失败啊 
+=============
+只能get, 写的操作已经被封装了。 
+
+不过腻可以pinvoke 
+
+[DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)] 
+public static extern bool InternetSetCookie(string lpszUrlName, string lbszCookieName, string lpszCookieData); 
+
+
+InternetSetCookie(url, "cookieName", "cookieValue"); 
+// navigate 
+webBrowser.Navigate(url); 
+
+=================
+
+WebBrowser.Document 属性 
+
+获取一个 HtmlDocument，它表示当前显示在 WebBrowser 控件中的网页。 
+
+命名空间:System.Windows.Forms 
+程序集:System.Windows.Forms（在 system.windows.forms.dll 中） 
+
+C# 
+public HtmlDocument Document { get; } 
+
+
+是只能get的。 
+===============================
+LZ可以试一下: 
+    public partial class WebBrowserControl : Form 
+{ 
+private String url; 
+
+[DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)] 
+public static extern bool InternetSetCookie(string lpszUrlName, string lbszCookieName, string lpszCookieData); 
+
+public WebBrowserControl(String path) 
+{ 
+this.url = path; 
+InitializeComponent(); 
+
+// set cookie 
+InternetSetCookie(url, "JSESSIONID", Globals.ThisDocument.sessionID); 
+
+// navigate 
+webBrowser.Navigate(url); 
+} 
+... 
+} 

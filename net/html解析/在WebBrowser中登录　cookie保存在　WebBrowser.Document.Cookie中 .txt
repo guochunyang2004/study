@@ -1,0 +1,35 @@
+各位，请问我想在程序中访问需要登陆的网站的源代码，在程序中webbrowser登陆后，自动后台察看本站源码。 
+我采用一些朋友说的保存cookie，附加到请求中，可行，但是有些网站读不到cookie，或cookie有问题，读不全的问题。 
+//在WebBrowser中登录　cookie保存在　WebBrowser.Document.Cookie中 
+            
+            CookieContainer myCookieContainer = new CookieContainer(); 
+
+            //String 的Cookie　要转成　Cookie型的　并放入CookieContainer中 
+            string cookieStr = webBrowser1.Document.Cookie; 
+            string[] cookstr = cookieStr.Split(';'); 
+            foreach (string str in cookstr) 
+            { 
+                string[] cookieNameValue = str.Split('='); 
+                Cookie ck = new Cookie(cookieNameValue[0].Trim().ToString(), cookieNameValue[1].Trim().ToString()); 
+                ck.Domain = "www.abc.com";//必须写对 
+                myCookieContainer.Add(ck); 
+            } 
+
+            HttpWebRequest hreq = (HttpWebRequest)HttpWebRequest.Create("http://www.abc.com/search.asp"); 
+            hreq.Method = "POST"; 
+            hreq.ContentType = "application/x-www-form-urlencoded"; 
+          
+            //自己创建的CookieContainer 
+            hreq.CookieContainer = myCookieContainer; 
+          
+            string postdata = "id=2005&action=search&name="; 
+            byte[] byte1 = Encoding.ASCII.GetBytes(postdata); 
+            hreq.ContentLength = byte1.Length; 
+            
+            Stream poststream = hreq.GetRequestStream(); 
+            poststream.Write(byte1, 0, byte1.Length); 
+            poststream.Close(); 
+        
+            HttpWebResponse hres = (HttpWebResponse)hreq.GetResponse(); 
+有些问题：如cookie：ASPSESSIONIDSSCTBTDS=MJAPHPLCKDLMOHGKNBIMLMPD; company=password=lvtong&id=2032不能写入， 
+另外还有没有别的思路来保留登陆状态！

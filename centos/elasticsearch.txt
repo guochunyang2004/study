@@ -1,0 +1,4 @@
+./plugin -install mobz/elasticsearch-head
+改为：./plugin install mobz/elasticsearch-head
+
+检测elasticsearch服务有没有启动：ps -aux | grep elasticsearch
